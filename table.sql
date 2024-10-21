@@ -17,7 +17,7 @@ CREATE TABLE postes (
     posteId INTEGER PRIMARY KEY NOT NULL,
     nomPoste VARCHAR(255) NOT NULL,
     departementId INTEGER NOT NULL,
-    FOREIGN KEY (departementId) REFERENCES departements(departementId),
+    FOREIGN KEY (departementId) REFERENCES departements(departementId)
 );
 
 CREATE TABLE departements (

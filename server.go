@@ -46,7 +46,6 @@ func initDB() {
         log.Fatal(err)
     }
 
-    // Assurez-vous que les tables existent
     sqlStmt, err := ioutil.ReadFile("data.sql")
     if err != nil {
         log.Fatal(err)

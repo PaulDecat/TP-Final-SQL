@@ -196,59 +196,59 @@ func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, nil)
 }
 
-func modifierEmployeHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method == http.MethodPost {
+// func modifierEmployeHandler(w http.ResponseWriter, r *http.Request) {
+//     if r.Method == http.MethodPost {
    
-        employeId := r.FormValue("employeId")
-        nom := r.FormValue("nom")
-        prenom := r.FormValue("prenom")
-        sexe := r.FormValue("sexe")
-        dateDeNaissance := r.FormValue("dateDeNaissance")
-        dateEmbauche := r.FormValue("dateEmbauche")
-        posteId := r.FormValue("posteId")
-        telephone := r.FormValue("telephone")
-        email := r.FormValue("email")
-        superieur := r.FormValue("superieur")
-        salaire := r.FormValue("salaire")
+//         employeId := r.FormValue("employeId")
+//         nom := r.FormValue("nom")
+//         prenom := r.FormValue("prenom")
+//         sexe := r.FormValue("sexe")
+//         dateDeNaissance := r.FormValue("dateDeNaissance")
+//         dateEmbauche := r.FormValue("dateEmbauche")
+//         posteId := r.FormValue("posteId")
+//         telephone := r.FormValue("telephone")
+//         email := r.FormValue("email")
+//         superieur := r.FormValue("superieur")
+//         salaire := r.FormValue("salaire")
 
         
-        _, err := db.Exec("UPDATE employes SET nom = ?, prenom = ?, sexe = ?, dateDeNaissance = ?, dateEmbauche = ?, posteId = ?, telephone = ?, email = ?, superieur = ?, salaire = ? WHERE employeId = ?",
-            nom, prenom, sexe, dateDeNaissance, dateEmbauche, posteId, telephone, email, superieur, salaire, employeId)
-        if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
+//         _, err := db.Exec("UPDATE employes SET nom = ?, prenom = ?, sexe = ?, dateDeNaissance = ?, dateEmbauche = ?, posteId = ?, telephone = ?, email = ?, superieur = ?, salaire = ? WHERE employeId = ?",
+//             nom, prenom, sexe, dateDeNaissance, dateEmbauche, posteId, telephone, email, superieur, salaire, employeId)
+//         if err != nil {
+//             http.Error(w, err.Error(), http.StatusInternalServerError)
+//             return
+//         }
 
        
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    }
+//         http.Redirect(w, r, "/", http.StatusSeeOther)
+//         return
+//     }
 
   
-    employeId := r.URL.Query().Get("employeId") 
+//     employeId := r.URL.Query().Get("employeId") 
 
     
-    var emp Employee
-    err := db.QueryRow("SELECT * FROM employes WHERE employeId = ?", employeId).Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.DateEmbauche, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
+//     var emp Employee
+//     err := db.QueryRow("SELECT * FROM employes WHERE employeId = ?", employeId).Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.DateEmbauche, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
 
-    if err == sql.ErrNoRows {
-        http.Error(w, "Employé non trouvé", http.StatusNotFound)
-        return
-    } else if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+//     if err == sql.ErrNoRows {
+//         http.Error(w, "Employé non trouvé", http.StatusNotFound)
+//         return
+//     } else if err != nil {
+//         http.Error(w, err.Error(), http.StatusInternalServerError)
+//         return
+//     }
 
 
-    tmpl, err := template.ParseFiles("templates/modifier_employe.html")
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+//     tmpl, err := template.ParseFiles("templates/modifier_employe.html")
+//     if err != nil {
+//         http.Error(w, err.Error(), http.StatusInternalServerError)
+//         return
+//     }
 
    
-    tmpl.Execute(w, emp)
-}
+//     tmpl.Execute(w, emp)
+// }
 
 
 

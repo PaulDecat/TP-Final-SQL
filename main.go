@@ -13,7 +13,7 @@ func main() {
   
     http.HandleFunc("/", indexHandler)
     http.HandleFunc("/ajouter", ajouterEmployeHandler)
-    http.HandleFunc("/modifier", modifierEmployeHandler)
+    // http.HandleFunc("/modifier", modifierEmployeHandler)
     http.HandleFunc("/supprimer", supprimerEmployeHandler)
     http.HandleFunc("/postes", listerPostesHandler)
     http.HandleFunc("/departements", listerDepartementsHandler)

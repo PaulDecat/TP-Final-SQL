@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Page d'accueil</title>
+</head>
+<body>
+    <h1>Bienvenue sur le système de gestion des employés</h1>
+    <nav>
+        <a href="/">Accueil</a>
+        <a href="/ajouter">Ajouter un Employé</a>
+        <a href="/modifier">Modifier un Employé</a>
+        <a href="/supprimer">Supprimer un Employé</a>
+        <a href="/postes">Lister les Postes</a>
+        <a href="/departements">Lister les Départements</a>
+    </nav>
+
+    <h2>Liste des Employés</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Sexe</th>
+                <th>Date de Naissance</th>
+                <th>Date d'Embauche</th>
+                <th>Poste</th>
+                <th>Téléphone</th>
+                <th>Email</th>
+                <th>Supérieur</th>
+                <th>Salaire</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Employees}}
+            <tr>
+                <td>{{.EmployeId}}</td>
+                <td>{{.Nom}}</td>
+                <td>{{.Prenom}}</td>
+                <td>{{.Sexe}}</td>
+                <td>{{.DateDeNaissance}}</td>
+                <td>{{.DateEmbauche}}</td>
+                <td>{{.PosteId}}</td>
+                <td>{{.Telephone}}</td>
+                <td>{{.Email}}</td>
+                <td>{{.Superieur}}</td>
+                <td>{{.Salaire}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+
+    <h2>Liste des Postes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom du Poste</th>
+                <th>ID du Département</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Postes}}
+            <tr>
+                <td>{{.PosteId}}</td>
+                <td>{{.NomPoste}}</td>
+                <td>{{.DepartementId}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+
+    <h2>Liste des Départements</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom du Département</th>
+                <th>ID du Directeur</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Departements}}
+            <tr>
+                <td>{{.DepartementId}}</td>
+                <td>{{.NomDepartement}}</td>
+                <td>{{.DirecteurDuDepartement}}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</body>
+</html>

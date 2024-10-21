@@ -1,29 +1,29 @@
 package main
 
 import (
-    "log"
-    "net/http"
+	"fmt"
+	"log"
+	"net/http"
 )
 
 func main() {
- 
-    initDB()
-    defer closeDB()
 
-  
-    http.HandleFunc("/", indexHandler)
-    http.HandleFunc("/ajouter", ajouterEmployeHandler)
-    http.HandleFunc("/modifier", modifierEmployeHandler)
-    http.HandleFunc("/supprimer", supprimerEmployeHandler)
-    http.HandleFunc("/postes", listerPostesHandler)
-    http.HandleFunc("/departements", listerDepartementsHandler)
+	initDB()
+	defer closeDB()
 
-    
-    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/ajouter", ajouterEmployeHandler)
+	http.HandleFunc("/modifier", modifierEmployeHandler)
+	http.HandleFunc("/supprimer", supprimerEmployeHandler)
+	http.HandleFunc("/postes", listerPostesHandler)
+	http.HandleFunc("/departements", listerDepartementsHandler)
 
-    log.Println("Serveur démarré sur le port 8080")
-    err := http.ListenAndServe(":8080", nil)
-    if err != nil {
-        log.Fatalf("Erreur lors du démarrage du serveur: %v", err)
-    }
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	log.Println("Serveur démarré sur le port 8080")
+	fmt.Printf("http://localhost:8080")
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatalf("Erreur lors du démarrage du serveur: %v", err)
+	}
 }

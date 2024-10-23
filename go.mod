@@ -1,5 +1,0 @@
-module mon_projet_employes
-
-go 1.18
-
-require github.com/mattn/go-sqlite3 v1.14.24

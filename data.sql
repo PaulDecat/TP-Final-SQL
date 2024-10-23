@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS employes (
     posteId INTEGER,
     telephone VARCHAR(10) NOT NULL,
     email VARCHAR(150) NOT NULL,
-    superieur INTEGER NULL OR NOT NULL,
+    superieur INTEGER NOT NULL,
     salaire INTEGER NOT NULL,
     FOREIGN KEY (posteId) REFERENCES postes(posteId)
 );

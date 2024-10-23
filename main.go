@@ -17,6 +17,7 @@ func main() {
     http.HandleFunc("/supprimer", supprimerEmployeHandler)
     http.HandleFunc("/postes", listerPostesHandler)
     http.HandleFunc("/departements", listerDepartementsHandler)
+    http.HandleFunc("/employes", listerEmployesHandler)
 
     
     http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

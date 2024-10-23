@@ -1,31 +1,33 @@
 package main
 
 import (
-    "database/sql"
-    _ "github.com/mattn/go-sqlite3"
-    "html/template"
-    "io/ioutil"
-    "log"
-    "net/http"
-    "time"
+	"database/sql"
+	"html/template"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
 
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 
 
 type Employee struct {
-    EmployeId      int             // ID de l'employé
-    Nom            string          // Nom de l'employé
-    Prenom         string          // Prénom de l'employé
-    Sexe           string          // Sexe de l'employé
-    DateDeNaissance  time.Time        // Date de naissance
-    PosteId        int             // ID du poste
-    Telephone      string          // Numéro de téléphone
-    Email          string          // Email
-    Superieur      int
-    Salaire        int             // Salaire
+    EmployeId       int      
+    Nom             string    
+    Prenom          string    
+    Sexe            string    
+    DateDeNaissance time.Time  
+    PosteId         int       
+    Telephone       string    
+    Email           string    
+    Superieur       *int      
+    Salaire         int      
 }
+
 
 type Poste struct {
     PosteId      int    
@@ -61,28 +63,33 @@ func closeDB() {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-    
-    employees, err := getAllEmployees()
+    searchTerm := r.URL.Query().Get("search")
+    var employees []Employee
+    var err error
+
+    if searchTerm != "" {
+        employees, err = searchEmployees(searchTerm) // Nouvelle fonction pour rechercher
+    } else {
+        employees, err = getAllEmployees()
+    }
+
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 
-    
     postes, err := getAllPostes()
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 
-   
     departements, err := getAllDepartements()
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 
- 
     data := struct {
         Employees    []Employee
         Postes       []Poste
@@ -101,8 +108,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, data)
 }
 
-func getAllEmployees() ([]Employee, error) {
-    rows, err := db.Query("SELECT employeId, nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire FROM employes")
+// Nouvelle fonction pour rechercher des employés
+func searchEmployees(searchTerm string) ([]Employee, error) {
+    rows, err := db.Query("SELECT * FROM employes WHERE nom LIKE ? OR prenom LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%")
     if err != nil {
         return nil, err
     }
@@ -110,22 +118,34 @@ func getAllEmployees() ([]Employee, error) {
 
     var employees []Employee
     for rows.Next() {
-        var e Employee
-        err = rows.Scan(&e.EmployeId, &e.Nom, &e.Prenom, &e.Sexe, &e.DateDeNaissance, &e.PosteId, &e.Telephone, &e.Email, &e.Superieur, &e.Salaire)
+        var emp Employee
+        err = rows.Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
         if err != nil {
             return nil, err
         }
-        employees = append(employees, e)
+        employees = append(employees, emp)
     }
-
-    if err = rows.Err(); err != nil {
-        return nil, err
-    }
-
     return employees, nil
 }
 
 
+func getAllEmployees() ([]Employee, error) {
+    rows, err := db.Query("SELECT * FROM employes")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+    var employees []Employee
+    for rows.Next() {
+        var emp Employee
+        err = rows.Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
+        if err != nil {
+            return nil, err
+        }
+        employees = append(employees, emp)
+    }
+    return employees, nil
+}
 
 
 func getAllPostes() ([]Poste, error) {
@@ -170,19 +190,43 @@ func getAllDepartements() ([]Departement, error) {
 
 func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
-        
         nom := r.FormValue("nom")
         prenom := r.FormValue("prenom")
         sexe := r.FormValue("sexe")
-        dateDeNaissance := r.FormValue("dateDeNaissance")
-        posteId := r.FormValue("posteId")
+        dateDeNaissanceStr := r.FormValue("dateDeNaissance")
+        
+        dateDeNaissance, err := time.Parse("2006-01-02", dateDeNaissanceStr) // Assurez-vous que le format est correct
+        if err != nil {
+            http.Error(w, "Invalid date format", http.StatusBadRequest)
+            return
+        }
+
+        posteId, err := strconv.Atoi(r.FormValue("posteId"))
+        if err != nil {
+            http.Error(w, "Invalid posteId", http.StatusBadRequest)
+            return
+        }
+
         telephone := r.FormValue("telephone")
         email := r.FormValue("email")
-        superieur := r.FormValue("superieur")
-        salaire := r.FormValue("salaire")
 
-       
-        _, err := db.Exec("INSERT INTO employes (nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        var superieur *int
+        if superieurStr := r.FormValue("superieur"); superieurStr != "" {
+            sup, err := strconv.Atoi(superieurStr)
+            if err != nil {
+                http.Error(w, "Invalid superieur", http.StatusBadRequest)
+                return
+            }
+            superieur = &sup
+        }
+
+        salaire, err := strconv.Atoi(r.FormValue("salaire"))
+        if err != nil {
+            http.Error(w, "Invalid salaire", http.StatusBadRequest)
+            return
+        }
+
+        _, err = db.Exec("INSERT INTO employes (nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire)
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -200,7 +244,6 @@ func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
     }
     tmpl.Execute(w, nil)
 }
-
 
 
 
@@ -278,4 +321,47 @@ func listerDepartementsHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
     tmpl.Execute(w, departements)
+}
+
+func listerEmployesHandler(w http.ResponseWriter, r *http.Request) {
+    searchTerm := r.URL.Query().Get("search")
+    
+    var rows *sql.Rows
+    var err error
+
+    if searchTerm != "" {
+        rows, err = db.Query("SELECT * FROM employes WHERE nom LIKE ? OR prenom LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%")
+    } else {
+        rows, err = db.Query("SELECT * FROM employes")
+    }
+
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+
+    var employees []Employee
+    for rows.Next() {
+        var emp Employee
+        err = rows.Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+        employees = append(employees, emp)
+    }
+
+    data := struct {
+        Employees []Employee
+    }{
+        Employees: employees,
+    }
+
+    tmpl, err := template.ParseFiles("templates/liste_employe.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, data)
 }

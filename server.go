@@ -1,44 +1,42 @@
 package main
 
 import (
-	"database/sql"
-	"html/template"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"strconv"
-	"time"
+    "database/sql"
+    "html/template"
+    "io/ioutil"
+    "log"
+    "net/http"
+    "strconv"
+    "time"
 
-	_ "github.com/mattn/go-sqlite3"
+    _ "github.com/mattn/go-sqlite3"
 )
 
 var db *sql.DB
 
-
 type Employee struct {
-    EmployeId       int      
-    Nom             string    
-    Prenom          string    
-    Sexe            string    
-    DateDeNaissance time.Time  
-    PosteId         int       
-    Telephone       string    
-    Email           string    
-    Superieur       *int      
-    Salaire         int      
+    EmployeId       int
+    Nom             string
+    Prenom          string
+    Sexe            string
+    DateDeNaissance time.Time
+    PosteId         int
+    Telephone       string
+    Email           string
+    Superieur       *int
+    Salaire         int
 }
 
-
 type Poste struct {
-    PosteId      int    
-    NomPoste     string 
-    DepartementId int   
+    PosteId      int
+    NomPoste     string
+    DepartementId int
 }
 
 type Departement struct {
-    DepartementId      int    
-    NomDepartement     string 
-    DirecteurDuDepartement string 
+    DepartementId      int
+    NomDepartement     string
+    DirecteurDuDepartement string
 }
 
 func initDB() {
@@ -68,7 +66,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     var err error
 
     if searchTerm != "" {
-        employees, err = searchEmployees(searchTerm) // Nouvelle fonction pour rechercher
+        employees, err = searchEmployees(searchTerm)
     } else {
         employees, err = getAllEmployees()
     }
@@ -108,9 +106,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, data)
 }
 
-// Nouvelle fonction pour rechercher des employés
 func searchEmployees(searchTerm string) ([]Employee, error) {
-    rows, err := db.Query("SELECT * FROM employes WHERE nom LIKE ? OR prenom LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%")
+    rows, err := db.Query("SELECT * FROM employes WHERE nom LIKE ? OR prenom LIKE ? OR employeId LIKE ?", "%"+searchTerm+"%", "%"+searchTerm+"%", "%"+searchTerm+"%")
+
     if err != nil {
         return nil, err
     }
@@ -127,7 +125,6 @@ func searchEmployees(searchTerm string) ([]Employee, error) {
     }
     return employees, nil
 }
-
 
 func getAllEmployees() ([]Employee, error) {
     rows, err := db.Query("SELECT * FROM employes")
@@ -146,7 +143,6 @@ func getAllEmployees() ([]Employee, error) {
     }
     return employees, nil
 }
-
 
 func getAllPostes() ([]Poste, error) {
     rows, err := db.Query("SELECT * FROM postes")
@@ -167,7 +163,6 @@ func getAllPostes() ([]Poste, error) {
     return postes, nil
 }
 
-
 func getAllDepartements() ([]Departement, error) {
     rows, err := db.Query("SELECT * FROM departements")
     if err != nil {
@@ -187,15 +182,14 @@ func getAllDepartements() ([]Departement, error) {
     return departements, nil
 }
 
-
 func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
         nom := r.FormValue("nom")
         prenom := r.FormValue("prenom")
         sexe := r.FormValue("sexe")
         dateDeNaissanceStr := r.FormValue("dateDeNaissance")
-        
-        dateDeNaissance, err := time.Parse("2006-01-02", dateDeNaissanceStr) // Assurez-vous que le format est correct
+
+        dateDeNaissance, err := time.Parse("2006-01-02", dateDeNaissanceStr)
         if err != nil {
             http.Error(w, "Invalid date format", http.StatusBadRequest)
             return
@@ -244,8 +238,6 @@ func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
     }
     tmpl.Execute(w, nil)
 }
-
-
 
 func supprimerEmployeHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
@@ -325,7 +317,6 @@ func listerDepartementsHandler(w http.ResponseWriter, r *http.Request) {
 
 func listerEmployesHandler(w http.ResponseWriter, r *http.Request) {
     searchTerm := r.URL.Query().Get("search")
-    
     var rows *sql.Rows
     var err error
 
@@ -358,10 +349,12 @@ func listerEmployesHandler(w http.ResponseWriter, r *http.Request) {
         Employees: employees,
     }
 
-    tmpl, err := template.ParseFiles("templates/liste_employe.html")
+    tmpl, err := template.ParseFiles("templates/lister_employes.html")
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
     tmpl.Execute(w, data)
 }
+
+

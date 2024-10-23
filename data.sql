@@ -1,7 +1,9 @@
 
 CREATE TABLE IF NOT EXISTS departements (
-    departementId INTEGER PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL
+    departementId INTEGER PRIMARY KEY NOT NULL,
+    nomDepartement VARCHAR(255) NOT NULL,
+    directeurDuDepartement VARCHAR(255) NOT NULL, 
+    FOREIGN KEY (directeurDuDepartement) REFERENCES employes(employeId)
 );
 
 
@@ -22,7 +24,7 @@ CREATE TABLE IF NOT EXISTS employes (
     posteId INTEGER,
     telephone VARCHAR(10) NOT NULL,
     email VARCHAR(150) NOT NULL,
-    superieur INTEGER,
+    superieur INTEGER NULL OR NOT NULL,
     salaire INTEGER NOT NULL,
     FOREIGN KEY (posteId) REFERENCES postes(posteId)
 );

@@ -25,11 +25,14 @@
         <input type="text" id="prenom" name="prenom" required><br>
         
         <label for="sexe">Sexe :</label>
-        <input type="text" id="sexe" name="sexe" required><br>
+        <select id="sexe" name="sexe" required>
+            <option value="" disabled selected>Sélectionnez un sexe</option>
+            <option value="F">Féminin</option>
+            <option value="M">Masculin</option>
+        </select><br>
         
         <label for="dateDeNaissance">Date de naissance :</label>
         <input type="date" id="dateDeNaissance" name="dateDeNaissance" required><br>
-        
         
         <label for="posteId">Poste ID :</label>
         <input type="number" id="posteId" name="posteId" required><br>

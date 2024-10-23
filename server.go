@@ -2,10 +2,12 @@ package main
 
 import (
     "database/sql"
+    _ "github.com/mattn/go-sqlite3"
     "html/template"
     "io/ioutil"
     "log"
     "net/http"
+    "time"
 
 )
 
@@ -13,16 +15,16 @@ var db *sql.DB
 
 
 type Employee struct {
-    EmployeId      int    
-    Nom            string 
-    Prenom         string 
-    Sexe           string 
-    DateDeNaissance string 
-    PosteId        int    
-    Telephone      string 
-    Email          string 
-    Superieur      int    
-    Salaire        int    
+    EmployeId      int             // ID de l'employé
+    Nom            string          // Nom de l'employé
+    Prenom         string          // Prénom de l'employé
+    Sexe           string          // Sexe de l'employé
+    DateDeNaissance  time.Time        // Date de naissance
+    PosteId        int             // ID du poste
+    Telephone      string          // Numéro de téléphone
+    Email          string          // Email
+    Superieur      int
+    Salaire        int             // Salaire
 }
 
 type Poste struct {
@@ -34,7 +36,7 @@ type Poste struct {
 type Departement struct {
     DepartementId      int    
     NomDepartement     string 
-    DirecteurDuDepartement int 
+    DirecteurDuDepartement string 
 }
 
 func initDB() {
@@ -99,9 +101,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, data)
 }
 
-
 func getAllEmployees() ([]Employee, error) {
-    rows, err := db.Query("SELECT * FROM employes")
+    rows, err := db.Query("SELECT employeId, nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire FROM employes")
     if err != nil {
         return nil, err
     }
@@ -109,15 +110,22 @@ func getAllEmployees() ([]Employee, error) {
 
     var employees []Employee
     for rows.Next() {
-        var emp Employee
-        err = rows.Scan(&emp.EmployeId, &emp.Nom, &emp.Prenom, &emp.Sexe, &emp.DateDeNaissance, &emp.PosteId, &emp.Telephone, &emp.Email, &emp.Superieur, &emp.Salaire)
+        var e Employee
+        err = rows.Scan(&e.EmployeId, &e.Nom, &e.Prenom, &e.Sexe, &e.DateDeNaissance, &e.PosteId, &e.Telephone, &e.Email, &e.Superieur, &e.Salaire)
         if err != nil {
             return nil, err
         }
-        employees = append(employees, emp)
+        employees = append(employees, e)
     }
+
+    if err = rows.Err(); err != nil {
+        return nil, err
+    }
+
     return employees, nil
 }
+
+
 
 
 func getAllPostes() ([]Poste, error) {
@@ -174,7 +182,7 @@ func ajouterEmployeHandler(w http.ResponseWriter, r *http.Request) {
         salaire := r.FormValue("salaire")
 
        
-        _, err := db.Exec("INSERT INTO employes (nom, prenom, sexe, dateDeNaissance, dateEmbauche, posteId, telephone, email, superieur, salaire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        _, err := db.Exec("INSERT INTO employes (nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             nom, prenom, sexe, dateDeNaissance, posteId, telephone, email, superieur, salaire)
         if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)

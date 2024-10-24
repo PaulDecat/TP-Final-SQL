@@ -382,9 +382,6 @@ func ajouterDepartementHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, nil)
 }
 
-
-
-
 func ajouterPosteHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method == http.MethodPost {
         nom := r.FormValue("nom")
@@ -412,4 +409,3 @@ func ajouterPosteHandler(w http.ResponseWriter, r *http.Request) {
     }
     tmpl.Execute(w, nil)
 }
-

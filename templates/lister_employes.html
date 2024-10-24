@@ -15,9 +15,13 @@
         <a href="/supprimer">Supprimer un Employé</a>
         <a href="/postes">Lister les Postes</a>
         <a href="/departements">Lister les Départements</a>
-        <a href="/employes">Voir ou recherché les Employés</a>
     </nav>
 
+    <h2>Recherche d'Employés</h2>
+    <form method="GET" action="/employes">
+        <input type="text" name="search" placeholder="Rechercher un employé..." />
+        <button type="submit">Rechercher</button>
+    </form>
 
     <h2>Liste des Employés</h2>
     <table>
@@ -53,44 +57,5 @@
         </tbody>
     </table>
 
-    <h2>Liste des Postes</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom du Poste</th>
-                <th>ID du Département</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .Postes}}
-            <tr>
-                <td>{{.PosteId}}</td>
-                <td>{{.NomPoste}}</td>
-                <td>{{.DepartementId}}</td>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
-
-    <h2>Liste des Départements</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom du Département</th>
-                <th>Nom du Directeur</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .Departements}}
-            <tr>
-                <td>{{.DepartementId}}</td>
-                <td>{{.NomDepartement}}</td>
-                <td>{{.DirecteurDuDepartement}}</td>
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
 </body>
 </html>

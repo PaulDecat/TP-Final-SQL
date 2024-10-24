@@ -1,4 +1,4 @@
-module mon_projet_employes
+module projet_sql
 
 go 1.18
 

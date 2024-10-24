@@ -15,7 +15,9 @@
         <a href="/supprimer">Supprimer un Employé</a>
         <a href="/postes">Lister les Postes</a>
         <a href="/departements">Lister les Départements</a>
+        <a href="/employes">Voir ou recherché les Employés</a>
     </nav>
+
 
     <h2>Liste des Employés</h2>
     <table>
@@ -26,7 +28,6 @@
                 <th>Prénom</th>
                 <th>Sexe</th>
                 <th>Date de Naissance</th>
-                <th>Date d'Embauche</th>
                 <th>Poste</th>
                 <th>Téléphone</th>
                 <th>Email</th>
@@ -42,7 +43,6 @@
                 <td>{{.Prenom}}</td>
                 <td>{{.Sexe}}</td>
                 <td>{{.DateDeNaissance}}</td>
-                <td>{{.DateEmbauche}}</td>
                 <td>{{.PosteId}}</td>
                 <td>{{.Telephone}}</td>
                 <td>{{.Email}}</td>
@@ -79,7 +79,7 @@
             <tr>
                 <th>ID</th>
                 <th>Nom du Département</th>
-                <th>ID du Directeur</th>
+                <th>Nom du Directeur</th>
             </tr>
         </thead>
         <tbody>

@@ -13,10 +13,10 @@ func main() {
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/ajouter", ajouterEmployeHandler)
-	http.HandleFunc("/modifier", modifierEmployeHandler)
 	http.HandleFunc("/supprimer", supprimerEmployeHandler)
 	http.HandleFunc("/postes", listerPostesHandler)
 	http.HandleFunc("/departements", listerDepartementsHandler)
+	http.HandleFunc("/employes", listerEmployesHandler)
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 

@@ -357,5 +357,59 @@ func listerEmployesHandler(w http.ResponseWriter, r *http.Request) {
     tmpl.Execute(w, data)
 }
 
+func ajouterDepartementHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method == http.MethodPost {
+        nomDepartement := r.FormValue("nomDepartement")
+        directeurDuDepartement := r.FormValue("directeurDuDepartement")
 
+        _, err := db.Exec("INSERT INTO departements (nomDepartement, directeurDuDepartement) VALUES (?, ?)",
+            nomDepartement, directeurDuDepartement)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        
+        http.Redirect(w, r, "/departements", http.StatusSeeOther)
+        return
+    }
+
+    tmpl, err := template.ParseFiles("templates/ajouter_departement.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, nil)
+}
+
+
+
+
+func ajouterPosteHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method == http.MethodPost {
+        nom := r.FormValue("nom")
+        departementId, err := strconv.Atoi(r.FormValue("departementId"))
+        if err != nil {
+            http.Error(w, "Invalid departementId", http.StatusBadRequest)
+            return
+        }
+
+        _, err = db.Exec("INSERT INTO postes (nom, departementId) VALUES (?, ?)",
+            nom, departementId)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+
+        http.Redirect(w, r, "/postes", http.StatusSeeOther)
+        return
+    }
+
+    tmpl, err := template.ParseFiles("templates/ajouter_poste.html")
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    tmpl.Execute(w, nil)
+}
 

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Département</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+    <nav>
+        <a href="/">Accueil</a>
+        <a href="/ajouter">Ajouter un Employé</a>
+        <a href="/employes">Voir ou recherché les Employés</a>
+        <a href="/modifier">Modifier un Employé</a>
+        <a href="/supprimer">Supprimer un Employé</a>
+        <a href="/postes">Lister les Postes</a>
+        <a href="/ajouter_postes">Ajouter un poste
+        <a href="/departements">Lister les Départements</a>   
+    </nav>
+
+    <h1>Ajouter un Nouveau Département</h1>
+    <form action="/ajouter_departements" method="post">
+        <div>
+            <label for="nomDepartement">Nom du Département:</label>
+            <input type="text" id="nomDepartement" name="nomDepartement" required>
+        </div>
+        <div>
+            <label for="directeurDuDepartement">Directeur du Département:</label>
+            <input type="text" id="directeurDuDepartement" name="directeurDuDepartement" required>
+        </div>
+        <div>
+            <button type="submit">Ajouter Département</button>
+        </div>
+    </form>
+</body>
+</html>
